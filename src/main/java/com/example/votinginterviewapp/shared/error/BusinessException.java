@@ -1,4 +1,4 @@
-package com.example.votinginterviewapp.business.voter.error;
+package com.example.votinginterviewapp.shared.error;
 
 import lombok.Getter;
 

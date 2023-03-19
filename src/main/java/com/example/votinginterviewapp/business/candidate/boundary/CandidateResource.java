@@ -8,19 +8,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200/")
+@RequestMapping("/candidates")
 @RequiredArgsConstructor
 public class CandidateResource {
 
     private final CandidateOperation candidateOperation;
 
-    @PostMapping("/candidates")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CandidateDto addCandidate(@RequestBody CandidateDto candidateDto) {
         return candidateOperation.addCandidate(candidateDto);
     }
 
-    @GetMapping("/candidates")
+    @GetMapping
     public List<CandidateDto> getCandidates() {
         return candidateOperation.getCandidates();
     }

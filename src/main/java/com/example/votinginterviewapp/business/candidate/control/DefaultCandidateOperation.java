@@ -3,18 +3,18 @@ package com.example.votinginterviewapp.business.candidate.control;
 import com.example.votinginterviewapp.business.candidate.boundary.CandidateOperation;
 import com.example.votinginterviewapp.business.candidate.model.Candidate;
 import com.example.votinginterviewapp.business.candidate.model.dto.CandidateDto;
-import com.example.votinginterviewapp.business.voter.model.dto.VoterDto;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class DefaultCandidateOperation implements CandidateOperation {
 
-    @Autowired
     private final CandidateRepository candidateRepository;
 
     @Override
@@ -23,21 +23,22 @@ public class DefaultCandidateOperation implements CandidateOperation {
                 .name(candidateDto.getName())
                 .build();
         Candidate savedCandidate = candidateRepository.save(candidate);
-        return CandidateDto.builder()
-                .name(savedCandidate.getName())
-                .build();
+        return toCandidateDto(savedCandidate);
     }
 
     @Override
     public List<CandidateDto> getCandidates() {
         List<Candidate> allCandidates = candidateRepository.findAll();
         return allCandidates.stream()
-                .map(candidate -> CandidateDto.builder()
-                        .id(candidate.getId())
-                        .name(candidate.getName())
-                        .votersCount(candidate.getVoters().size())
-                        .build()
-                )
+                .map(this::toCandidateDto)
                 .toList();
+    }
+
+    private CandidateDto toCandidateDto(Candidate candidate) {
+        return CandidateDto.builder()
+                .id(candidate.getId())
+                .name(candidate.getName())
+                .votersCount(Objects.isNull(candidate.getVoters()) ? 0 : candidate.getVoters().size())
+                .build();
     }
 }
